@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CompletableFutureExample {
     private static final Logger log = Logger.getLogger(CompletableFutureExample.class.getSimpleName());
@@ -92,8 +93,13 @@ public class CompletableFutureExample {
 //                                    .flatMap(Collection::stream)
 //                                    .toList();
 //                        }, pool);
-//
-//        List<URI> result = allUrisCombined.join();
+
+        Optional<CompletableFuture<List<URI>>> allUrisCombined =
+                Stream.of(urisFutureOne, urisFutureTwo, urisFutureThee, urisFutureFour)
+                        .reduce((futureOne, futureTwo) -> futureOne.thenCombineAsync(futureTwo,
+                                (fOne, fTwo) -> Stream.of(fOne, fTwo).flatMap(Collection::stream).toList(), pool));
+
+        List<URI> result = allUrisCombined.orElseThrow(() -> new RuntimeException("unable do process futures")).join();
 
 //        List<URI> result = allOfExceptionally(List.of(urisFutureOne, urisFutureTwo, urisFutureThee, urisFutureFour), pool)
 //                .thenApplyAsync(lists -> lists.stream().flatMap(Collection::stream).toList(), pool)
@@ -106,9 +112,9 @@ public class CompletableFutureExample {
 //                }, pool)
 //                .join();
 
-        List<URI> result = anyOf(List.of(urisFutureOne, urisFutureTwo, urisFutureThee, urisFutureFour), pool)
-                .thenApplyAsync(lists -> lists.stream().flatMap(Collection::stream).toList(), pool)
-                .join();
+//        List<URI> result = anyOf(List.of(urisFutureOne, urisFutureTwo, urisFutureThee, urisFutureFour), pool)
+//                .thenApplyAsync(lists -> lists.stream().flatMap(Collection::stream).toList(), pool)
+//                .join();
 
         Instant end = Instant.now();
 
