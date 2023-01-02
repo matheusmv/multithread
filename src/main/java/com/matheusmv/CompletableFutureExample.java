@@ -99,7 +99,7 @@ public class CompletableFutureExample {
                         .reduce((futureOne, futureTwo) -> futureOne.thenCombineAsync(futureTwo,
                                 (fOne, fTwo) -> Stream.of(fOne, fTwo).flatMap(Collection::stream).toList(), pool));
 
-        List<URI> result = allUrisCombined.orElseThrow(() -> new RuntimeException("unable do process futures")).join();
+        List<URI> result = allUrisCombined.orElseThrow(() -> new RuntimeException("unable to process futures")).join();
 
 //        List<URI> result = allOfExceptionally(List.of(urisFutureOne, urisFutureTwo, urisFutureThee, urisFutureFour), pool)
 //                .thenApplyAsync(lists -> lists.stream().flatMap(Collection::stream).toList(), pool)
